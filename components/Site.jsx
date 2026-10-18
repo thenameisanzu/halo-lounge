@@ -5,8 +5,17 @@ import { Minus, Plus, MapPin } from 'lucide-react'
 
 // ---- Edit content here ----
 const CO = { whatsapp: '910000000000', address: 'Rooftop, Building name, Marine Drive, Kochi', hours: 'Every day, 5 pm to 2 am' }
-const EVENTS = [['Friday', 'Sunset sessions with a live DJ', '7 pm onwards', '#FF2E93'], ['Saturday', 'Acoustic nights, local artists', '8 pm onwards', '#7C3AED'], ['Sunday', 'Rooftop brunch and vinyl', '12 pm to 4 pm', '#22D3EE']]
-const DRINKS = [['Monsoon Negroni', 'Gin, vermouth, smoked jaggery', '₹650', '#FF2E93'], ['Kerala Sour', 'Rum, tender coconut, lime', '₹590', '#22D3EE'], ['Malabar Mule', 'Vodka, ginger, curry leaf', '₹620', '#FFB020'], ['Midnight Chai', 'Whisky, masala chai, cardamom foam', '₹680', '#7C3AED']]
+const EVENTS = [
+  ['Friday', 'Sunset sessions with a live DJ', '7 pm onwards', '#FF2E93', '/events/friday-sunset-dj.jpg'],
+  ['Saturday', 'Acoustic nights, local artists', '8 pm onwards', '#7C3AED', '/events/saturday-acoustic.jpg'],
+  ['Sunday', 'Rooftop brunch and vinyl', '12 pm to 4 pm', '#22D3EE', '/events/sunday-brunch.jpg']
+]
+const DRINKS = [
+  ['Monsoon Negroni', 'Gin, vermouth, smoked jaggery', '₹650', '#FF2E93', '/drinks/monsoon-negroni.jpg'],
+  ['Kerala Sour', 'Rum, tender coconut, lime', '₹590', '#22D3EE', '/drinks/kerala-sour.jpg'],
+  ['Malabar Mule', 'Vodka, ginger, curry leaf', '₹620', '#FFB020', '/drinks/malabar-mule.jpg'],
+  ['Midnight Chai', 'Whisky, masala chai, cardamom foam', '₹680', '#7C3AED', '/drinks/midnight-chai.jpg']
+]
 const LINKS = [['events', 'Events'], ['menu', 'Menu'], ['reserve', 'Reserve']]
 const wa = (t) => `https://wa.me/${CO.whatsapp}?text=${encodeURIComponent(t)}`
 const glass = 'rounded-3xl bg-white/[.07] ring-1 ring-white/15 backdrop-blur-xl'
@@ -47,11 +56,16 @@ function Tilt({ d }) {
   return (
     <motion.div style={{ rotateX: rx, rotateY: ry, transformPerspective: 700 }}
       onPointerMove={(e) => { const b = e.currentTarget.getBoundingClientRect(); ry.set(((e.clientX - b.left) / b.width - .5) * 18); rx.set(-((e.clientY - b.top) / b.height - .5) * 18) }}
-      onPointerLeave={() => { rx.set(0); ry.set(0) }} className={`${glass} relative overflow-hidden p-6`}>
-      <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full opacity-60 blur-3xl" style={{ background: d[3] }} />
-      <p className="relative font-display text-xl leading-tight">{d[0]}</p>
-      <p className="relative mt-3 text-white/70">{d[1]}</p>
-      <p className="relative mt-8 font-display text-2xl">{d[2]}</p>
+      onPointerLeave={() => { rx.set(0); ry.set(0) }} className={`${glass} group relative flex flex-col justify-between overflow-hidden p-5 transition-shadow hover:shadow-2xl hover:shadow-pink/10`}>
+      <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full opacity-60 blur-3xl" style={{ background: d[3] }} />
+      <div>
+        <div className="relative mb-4 h-48 w-full overflow-hidden rounded-2xl bg-white/5">
+          <img src={d[4]} alt={d[0]} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+        </div>
+        <p className="relative font-display text-xl leading-tight">{d[0]}</p>
+        <p className="relative mt-2 text-sm text-white/70">{d[1]}</p>
+      </div>
+      <p className="relative mt-6 font-display text-2xl font-bold" style={{ color: d[3] }}>{d[2]}</p>
     </motion.div>
   )
 }
@@ -80,12 +94,15 @@ export default function Site() {
       <Island />
 
       <section className="relative flex min-h-[100dvh] flex-col justify-center overflow-hidden pb-10 pt-24">
-        <h1 aria-label="Halo" className="px-5 text-center font-display text-[25vw] font-extrabold leading-[.85] lg:text-[16vw]">
+        <h1 aria-label="Halo" className="flex items-center justify-center whitespace-nowrap px-4 text-center font-display text-[18vw] font-extrabold leading-none tracking-tight sm:text-[20vw] md:text-[18vw] lg:text-[16vw]">
           {'HALO'.split('').map((c, i) => <motion.span key={i} aria-hidden className="inline-block bg-gradient-to-b from-white to-pink bg-clip-text text-transparent" initial={{ y: 80, opacity: 0 }} animate={{ y: [0, -14, 0], opacity: 1 }} transition={{ y: { duration: 3, delay: 1 + i * .2, repeat: Infinity, ease: 'easeInOut' }, opacity: { delay: .2 + i * .12 } }}>{c}</motion.span>)}
         </h1>
         <p className="mx-auto mt-6 max-w-xs text-center text-lg text-white/80 md:max-w-md md:text-2xl">Rooftop lounge in Kochi. Cocktails, live music and the best sunset on the water.</p>
-        <div className="mt-8 flex justify-center gap-3"><button onClick={() => to('reserve')} className="rounded-full bg-pink px-7 py-4 font-bold">Reserve a table</button><button onClick={() => to('menu')} className="rounded-full px-7 py-4 font-bold ring-1 ring-white/40">See the menu</button></div>
-        <div className="mt-14 space-y-3 font-display text-5xl font-bold md:text-7xl">
+        <div className="mt-8 flex flex-wrap justify-center gap-3 px-4">
+          <button onClick={() => to('reserve')} className="rounded-full bg-pink px-6 py-3.5 text-sm font-bold sm:px-7 sm:py-4 sm:text-base transition hover:opacity-90 active:scale-95">Reserve a table</button>
+          <button onClick={() => to('menu')} className="rounded-full px-6 py-3.5 text-sm font-bold ring-1 ring-white/40 sm:px-7 sm:py-4 sm:text-base transition hover:bg-white/10 active:scale-95">See the menu</button>
+        </div>
+        <div className="mt-14 space-y-3 font-display text-4xl font-bold sm:text-5xl md:text-7xl">
           {[['outline', ['0%', '-50%']], ['text-aqua', ['-50%', '0%']]].map(([cls, x], r) => (
             <div key={r} className="overflow-hidden whitespace-nowrap"><motion.div className={`flex w-max gap-8 ${cls}`} animate={{ x }} transition={{ duration: 26, repeat: Infinity, ease: 'linear' }}>{Array(8).fill(r ? 'Sunset views • Live DJ •' : 'Signature cocktails • Rooftop •').map((t, i) => <span key={i}>{t}</span>)}</motion.div></div>))}
         </div>
@@ -94,12 +111,19 @@ export default function Site() {
       <section id="events" className="mx-auto max-w-3xl scroll-mt-20 px-5 py-24">
         <h2 className="font-display text-4xl font-bold md:text-6xl">This week at Halo</h2>
         <div className="mt-12">
-          {EVENTS.map(([day, t, time, c], i) => (
-            <div key={day} className={`${glass} sticky mb-6 overflow-hidden p-6`} style={{ top: 88 + i * 16 }}>
-              <div className="absolute -right-16 -top-16 h-52 w-52 rounded-full opacity-50 blur-3xl" style={{ background: c }} />
+          {EVENTS.map(([day, t, time, c, img], i) => (
+            <div key={day} className={`${glass} mb-6 overflow-hidden p-6 md:sticky`} style={{ top: 88 + i * 16 }}>
+              <div className="pointer-events-none absolute -right-16 -top-16 h-52 w-52 rounded-full opacity-50 blur-3xl" style={{ background: c }} />
               <div className="relative grid gap-5 md:grid-cols-2 md:items-center">
-                <div className="h-44 rounded-2xl bg-white/10 p-4 text-xs text-white/50 md:h-52">Event photo placeholder</div>
-                <div><p className="font-display text-3xl">{day}</p><p className="mt-3 text-lg text-white/80">{t}</p><p className="mt-1 text-white/60">{time}</p><a href={wa(`Hi Halo, I'd like to join ${day}: ${t}.`)} className="mt-6 inline-block rounded-full px-6 py-3 font-bold text-night" style={{ background: c }}>Book for {day}</a></div>
+                <div className="relative h-48 w-full overflow-hidden rounded-2xl bg-white/5 sm:h-56 md:h-52">
+                  <img src={img} alt={`${day} - ${t}`} className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
+                </div>
+                <div>
+                  <p className="font-display text-3xl">{day}</p>
+                  <p className="mt-3 text-lg text-white/80">{t}</p>
+                  <p className="mt-1 text-white/60">{time}</p>
+                  <a href={wa(`Hi Halo, I'd like to join ${day}: ${t}.`)} className="mt-6 inline-block rounded-full px-6 py-3 font-bold text-night transition hover:opacity-90 active:scale-95" style={{ background: c }}>Book for {day}</a>
+                </div>
               </div>
             </div>))}
         </div>
@@ -130,3 +154,4 @@ export default function Site() {
     </MotionConfig>
   )
 }
+
